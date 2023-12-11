@@ -1,0 +1,11 @@
+button {
+  background: purple;
+  color: yellow;
+  outline: none;
+  margin-top: 1rem;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
