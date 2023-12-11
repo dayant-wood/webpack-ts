@@ -1,5 +1,6 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import webpack from "webpack";
 import "webpack-dev-server";
 
@@ -9,10 +10,11 @@ type ENV = {
 };
 export default (env: ENV) => {
   const isDev = env.mode === "development";
+  const isProd = env.mode === "production";
 
   const config: webpack.Configuration = {
     mode: env.mode ?? "development",
-    entry: path.resolve(__dirname, "src", "index.ts"),
+    entry: path.resolve(__dirname, "src", "index.tsx"),
     output: {
       path: path.resolve(__dirname, "build"),
       filename: "[name].[contenthash].js",
@@ -23,10 +25,27 @@ export default (env: ENV) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, "public", "index.html"),
       }),
+
+      isProd &&
+        new MiniCssExtractPlugin({
+          filename: "css/[name].[contenthash:8].css",
+          chunkFilename: "css/[name].[contenthash:8].css",
+        }),
     ].filter(Boolean),
 
     module: {
       rules: [
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            // Creates `style` nodes from JS strings
+            isDev ? "style-loader" : MiniCssExtractPlugin.loader,
+            // Translates CSS into CommonJS
+            "css-loader",
+            // Compiles Sass to CSS
+            "sass-loader",
+          ],
+        },
         {
           test: /\.tsx?$/,
           use: "ts-loader",
