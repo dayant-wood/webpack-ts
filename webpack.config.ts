@@ -1,71 +1,22 @@
 import path from "path";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import webpack from "webpack";
 import "webpack-dev-server";
+import { buildWebpack } from "./config/buildWebpack";
+import { BuildOptions, BuildMode } from "./config/types/types";
 
 type ENV = {
-  mode: "development" | "production";
+  mode: BuildMode;
   port: number;
 };
 export default (env: ENV) => {
-  const isDev = env.mode === "development";
-  const isProd = env.mode === "production";
-
-  const config: webpack.Configuration = {
+  const options: BuildOptions = {
+    port: env.port ?? 3000,
     mode: env.mode ?? "development",
-    entry: path.resolve(__dirname, "src", "index.tsx"),
-    output: {
-      path: path.resolve(__dirname, "build"),
-      filename: "[name].[contenthash].js",
-      clean: true,
+    paths: {
+      html: path.resolve(__dirname, "public", "index.html"),
+      entry: path.resolve(__dirname, "src", "index.tsx"),
+      output: path.resolve(__dirname, "build"),
     },
-
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "public", "index.html"),
-      }),
-
-      isProd &&
-        new MiniCssExtractPlugin({
-          filename: "css/[name].[contenthash:8].css",
-          chunkFilename: "css/[name].[contenthash:8].css",
-        }),
-    ].filter(Boolean),
-
-    module: {
-      rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            isDev ? "style-loader" : MiniCssExtractPlugin.loader,
-            // Translates CSS into CommonJS
-            "css-loader",
-            // Compiles Sass to CSS
-            "sass-loader",
-          ],
-        },
-        {
-          test: /\.tsx?$/,
-          use: "ts-loader",
-          exclude: /node_modules/,
-        },
-      ],
-    },
-    resolve: {
-      extensions: [".tsx", ".ts", ".js"],
-    },
-
-    devtool: isDev && "inline-source-map",
-
-    devServer: isDev
-      ? {
-          port: env.port ?? 3000,
-          open: true,
-        }
-      : undefined,
   };
 
-  return config;
+  return buildWebpack(options);
 };
