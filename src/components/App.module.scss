@@ -1,4 +1,4 @@
-button {
+.button {
   background: purple;
   color: yellow;
   outline: none;
@@ -8,4 +8,8 @@ button {
   &:active {
     opacity: 0.6;
   }
+}
+
+.text {
+  color: wheat;
 }
