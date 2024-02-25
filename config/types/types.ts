@@ -2,6 +2,7 @@ export type BuildOptions = {
   port: number;
   mode: BuildMode;
   paths: BuildPaths;
+  analyzer?: boolean;
 };
 
 export type BuildPaths = {
