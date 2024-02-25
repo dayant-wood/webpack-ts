@@ -1,13 +1,14 @@
 import path from "path";
 import "webpack-dev-server";
 import { buildWebpack } from "./config/buildWebpack";
-import { BuildOptions, BuildMode } from "./config/types/types";
+import { BuildMode } from "./config/types/types";
 import webpack from "webpack";
 
 type ENV = {
   mode: BuildMode;
   port: number;
   analyzer?: boolean;
+  src: string;
 };
 export default (env: ENV) => {
   const config: webpack.Configuration = buildWebpack({
@@ -17,6 +18,7 @@ export default (env: ENV) => {
       html: path.resolve(__dirname, "public", "index.html"),
       entry: path.resolve(__dirname, "src", "index.tsx"),
       output: path.resolve(__dirname, "build"),
+      src: path.resolve(__dirname, "src"),
     },
     analyzer: env.analyzer,
   });
